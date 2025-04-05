@@ -1,0 +1,63 @@
+/* Navbar.css */
+
+/* Style for the nav container */
+.nav {
+    padding: 20px 40px; /* Increased padding for better spacing */
+    background: linear-gradient(90deg,black,black); /* Gradient background for a modern look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    display: flex;
+    justify-content: center; /* Center the links */
+    align-items: center;
+    position: sticky; /* Make the navbar sticky at the top */
+    top: 0;
+    z-index: 1000; /* Ensure it stays above other content */
+  }
+  
+  /* Style for the links */
+  .nav-link {
+    margin: 0 30px; /* Increased margin for better spacing between links */
+    color: #ffffff; /* White text color */
+    font-family: 'Poppins', sans-serif; /* Modern font (you can include this via Google Fonts) */
+    font-size: 18px; /* Slightly larger font size */
+    font-weight: 500; /* Medium font weight for better readability */
+    text-decoration: none; /* Remove underline */
+    position: relative; /* For the hover underline effect */
+    transition: color 0.3s ease; /* Smooth color transition on hover */
+  }
+  
+  /* Hover effect for links */
+  .nav-link:hover {
+    color: #ffe4b5; /* Light peach color on hover */
+  }
+  
+  /* Underline animation on hover */
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: #ffe4b5; /* Matching the hover color */
+    left: 0;
+    bottom: -5px; /* Position the underline below the text */
+    transition: width 0.3s ease; /* Smooth width transition */
+  }
+  
+  .nav-link:hover::after {
+    width: 100%; /* Expand the underline on hover */
+  }
+  
+  /* Active link style (optional, if you want to highlight the current page) */
+  .nav-link.active {
+    color: #ffe4b5;
+    font-weight: 600; /* Slightly bolder for the active link */
+  }
+
+  @media (max-width: 768px) {
+    .nav {
+      flex-direction: column;
+      padding: 15px;
+    }
+    .nav-link {
+      margin: 10px 0;
+    }
+  }
