@@ -1,0 +1,69 @@
+.items-container {
+    padding: 20px;
+    color: white;
+    background-color: #2e2d2c;
+    height: 50vh;
+    width: 100%;
+    overflow-y: auto;
+    border: rgb(249, 228, 190);
+    border-style: double;
+    /* border-radius: 40px 40px 0px 0px; */
+  }
+  
+  .items-title {
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    color: orange;
+  }
+  
+  .items-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+  }
+  
+  .item-card {
+    background-color: #1f1f1f;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  
+  .item-card:hover {
+    transform: scale(1.05);
+    background-color: #2a2a2a;
+  }
+  
+  .item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .item-info h4 {
+    margin: 5px 0;
+    font-size: 1rem;
+  }
+  
+  .item-info p {
+    font-size: 0.9rem;
+    color: #ccc;
+  }
+  
+  .add-btn {
+    margin-top: 10px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    background-color: orange;
+    color: black;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .add-btn:hover {
+    background-color: gold;
+  }

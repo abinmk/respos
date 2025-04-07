@@ -1,0 +1,23 @@
+
+.waiter-container{
+display: flex;
+justify-content: space-between;
+align-items: center;
+background-color: rgba(57, 57, 57, 0.36);
+}
+
+.waiter-left{
+  /* background-color: rgb(57, 55, 55); */
+  width: 15%;
+  height: 100vh;
+}
+.waiter-center{
+  /* background-color:rgb(57, 55, 55); */
+  width: 65%;
+  height: 100vh;
+}
+.waiter-right{
+  /* background-color: rgb(57, 55, 55); */
+  width: 20%;
+  height: 100vh;
+}

@@ -1,0 +1,59 @@
+.menu-container {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .menu-container h2 {
+    color: orange;
+    margin-bottom: 20px;
+  }
+  
+  .table-list {
+    height: calc(100% - 60px);
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+  
+  .table-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background-color: #2a2a2a;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .table-item:hover {
+    background-color: #333;
+  }
+  
+  .table-name {
+    flex: 1;
+  }
+  
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 8px;
+  }
+  
+  .dot-occupied {
+    background-color: red;
+  }
+  
+  .dot-free {
+    background-color: green;
+  }
+  
+  .status-label {
+    font-size: 0.8rem;
+  }

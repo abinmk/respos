@@ -1,28 +1,21 @@
-import { useState } from 'react'
-import './bootstrap.min.css'
-import { Routes,Route } from 'react-router-dom'
-import AdminDashboard from '../Pages/Admin/AdminDashboard'
-import WaiterDashboard from '../Pages/Waiter/WaiterDashboard'
-import KitchenDashboard from '../Pages/Kitchen/KitchenDashboard'
-import BillingDashboard from '../Pages/Billing/BillingDashboard'
-import Landing from '../Pages/Landing'
-
+import { Routes, Route } from 'react-router-dom';
+import Auth from './Pages/Auth/Auth';
+import WaiterDashboard from './Pages/Waiter/WaiterDashboard';
+// import KitchebDashboard from './Pages/Kitchen/KitchenDashboard';
+// import BillingDashboard from './Pages/Billing/BillingDashboard';
+// import AdminDashboard from './Pages/Admin/AdminDashboard';
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  console.log("react app")
   return (
-    <>
-     
-     <Routes>
-      <Route path='/' element={<Landing/>}/>
-      <Route path='/waiter' element={<WaiterDashboard/>}/>
-      <Route path='/admin' element={<AdminDashboard/>}/>
-      <Route path='/kitchen' element={<KitchenDashboard/>}/>
-      <Route path='/cashier' element={<BillingDashboard/>}/>
-     </Routes>
-    </>
-  )
+    <Routes>
+      <Route path="/login" element={<Auth />} />
+      {/* <Route path="/admin" element={<AdminDashboard/>} /> */}
+      <Route path="/waiter" element={<WaiterDashboard/>} />
+      {/* <Route path="/kitchen" element={<KitchebDashboard/>} />
+      <Route path="/cashier" element={<BillingDashboard/>} /> */}
+    </Routes>
+  );
 }
 
-export default App
+export default App;

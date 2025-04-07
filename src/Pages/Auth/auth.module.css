@@ -1,0 +1,211 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.toggleLink{
+  color: rgb(233, 199, 28);
+}
+
+.toggleLink:hover{
+  cursor: pointer;
+}
+
+/* Left Section (Image + Quote) */
+.leftSection {
+  width: 50%;
+  background: url("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fA%3D%3D") center/cover no-repeat;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: darken;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 30px;
+}
+
+.quote {
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.founder {
+  font-weight: bold;
+  color: #ffcc00;
+  margin-top: 10px;
+}
+
+/* Right Section - Login Form */
+.rightSection {
+  width: 50%;
+  background-color: #111;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 40px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #ffcc00;
+  text-align: center;
+  text-decoration: none;
+  margin-bottom: 25px;
+}
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 80vh;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form input {
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: white;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: #ffcc00;
+  outline: none;
+  box-shadow: 0 0 4px #ffcc00;
+}
+
+/* Role Buttons */
+.roleButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.forgotPassword>a{
+  text-decoration: none;
+  color: #ffcc00;
+}
+
+.roleButtons button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: #222;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.roleButtons button.active {
+  background-color: #ffcc00;
+  color: black;
+}
+
+/* Signup Button */
+.authBtn {
+  padding: 14px;
+  background-color: #ffcc00;
+  color: black;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 5px;
+  margin-top: 12px;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.authBtn:hover {
+  background-color: #e6b800;
+}
+
+.signinText {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.signinText a {
+  color: #ffcc00;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signinText a:hover {
+  text-decoration: underline;
+}
+
+/* ✅ Responsive Styling */
+@media screen and (max-width: 1299px) {
+  .leftSection {
+    display: block;
+  }
+
+  .rightSection {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 899px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .leftSection {
+    width: 100%;
+    height: 40vh;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .rightSection {
+    width: 100%;
+    padding: 30px 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .formContent {
+    height: auto;
+  }
+
+  .form input {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .authBtn {
+    padding: 16px;
+    font-size: 16px;
+  }
+}
