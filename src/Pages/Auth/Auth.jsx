@@ -1,192 +1,187 @@
-import React, { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import styles from "./auth.module.css";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
 import "react-toastify/dist/ReactToastify.css";
+import "./auth.css"; // Global CSS file
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("waiter"); // default role
+  const [role, setRole] = useState("waiter");
   const [errors, setErrors] = useState({});
-  const { login } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (window.innerWidth <= 1268) {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }
-  }, [isLogin]);
+  const { login } = useAuth();
 
   const validateForm = () => {
+    const newErrors = {};
     let valid = true;
-    let errors = {};
 
     if (!/^\d{10}$/.test(mobile)) {
-      errors.mobile = "Mobile number must be exactly 10 digits.";
-      valid = false;
-    }
-
-    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(password) && !isLogin) {
-      errors.password = "Password must be at least 6 characters, include a number, uppercase and lowercase.";
+      newErrors.mobile = "Mobile number must be 10 digits.";
       valid = false;
     }
 
     if (!isLogin && password !== confirmPassword) {
-      errors.confirmPassword = "Passwords do not match.";
+      newErrors.confirmPassword = "Passwords do not match.";
       valid = false;
     }
 
-    if (!isLogin && !role) {
-      errors.role = "Please select a role.";
-      valid = false;
-    }
-
-    setErrors(errors);
+    setErrors(newErrors);
     return valid;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
-    const endpoint = isLogin 
-    ? "http://localhost:8080/api/login" 
-    : "http://localhost:8080/api/signup";
-  
-    const payload = isLogin
+
+    const url = isLogin
+      ? "http://localhost:8080/api/login"
+      : "http://localhost:8080/api/signup";
+
+    const userData = isLogin
       ? { email, password }
       : { name, email, mobile, password, role };
-  
+
     try {
-      const response = await fetch(endpoint, {
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(userData),
       });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
+
+      const data = await res.json();
+
+      if (res.ok) {
         if (isLogin) {
-          toast.success("Login successful");
-  
-          // If you want to handle JWT later, here's how:
-          // const token = data.token;
-          // localStorage.setItem("token", token);
-          // const decoded = jwtDecode(token);
-          // login({ name: decoded.name, role: decoded.role, mobile: decoded.mobile });
-  
-          navigate(`/${data.user.role.toLowerCase()}`);
+          toast.success("Login successful!");
+          login(data.user);
+          navigate(`/${data.user.role}`);
         } else {
           toast.success("Account created! Please log in.");
-          setTimeout(() => {
-            setIsLogin(true);
-          }, 1000);
+          setIsLogin(true);
         }
       } else {
         toast.error(data.message || "Something went wrong.");
       }
-    } catch (error) {
-      toast.error("Error connecting to server.");
-      console.error("Signup/Login Error:", error);
+    } catch (err) {
+      toast.error("Server error. Try again later.");
     }
   };
 
   const handleMobileChange = (e) => {
-    const input = e.target.value.replace(/\D/g, "");
-    if (input.length <= 10) setMobile(input);
+    const value = e.target.value.replace(/\D/g, "");
+    if (value.length <= 10) setMobile(value);
   };
-  console.log("Rendering Auth component");
 
   return (
-    
-    <div className={styles.container}>
-      <div className={styles.leftSection}>
-        <p className={styles.quote}>
-          "Serve with speed, accuracy, and a smile – let tech do the rest."
+    <div className="container">
+      <div className="leftSection">
+        <p className="quote">
+          "Serve with speed, accuracy, and a smile - let tech do the rest."
         </p>
-        <p className={styles.founder}>- Restro POS Team</p>
+        <p className="founder">- Restro POS Team</p>
       </div>
 
-      <div className={styles.rightSection}>
-        <div className={styles.formContainer}>
-          <h2 className={styles.title}>
-            <Link to="/" className={styles.title}>
+      <div className="rightSection">
+        <div className="form-content">
+          <h2 className="title">
+            <Link to="/" className="title">
               {isLogin ? "Login" : "Employee Registration"}
             </Link>
           </h2>
 
-          <form className={styles.form} onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="form">
             {!isLogin && (
               <>
                 <label>Employee Name</label>
-                <input type="text" required value={name} 
-                placeholder="Enter Employee name"
-                onChange={(e) => setName(e.target.value)} />
-                
-                <label>Employee Email</label>
-                <input type="email" required 
-                  placeholder="Enter Employee Email"
-                  value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input
+                  type="text"
+                  value={name}
+                  required
+                  placeholder="Enter your name"
+                  onChange={(e) => setName(e.target.value)}
+                />
+
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  required
+                  placeholder="Enter your email"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </>
             )}
 
-            <label>Employee Phone</label>
-              <input type="tel" value={mobile} onChange={handleMobileChange} 
-                placeholder="Enter Employee mobile numbers"
-                required />
-            {errors.mobile && <p className={styles.errorMsg}>{errors.mobile}</p>}
+            <label>Phone</label>
+            <input
+              type="tel"
+              value={mobile}
+              required
+              placeholder="Enter 10-digit phone number"
+              onChange={handleMobileChange}
+            />
+            {errors.mobile && <p className="error">{errors.mobile}</p>}
 
             <label>Password</label>
-            <input type="password" 
-              placeholder="Enter passsword" value={password} onChange={(e) => setPassword(e.target.value)} required />
-            {errors.password && <p className={styles.errorMsg}>{errors.password}</p>}
+            <input
+              type="password"
+              value={password}
+              required
+              placeholder="Enter password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
             {!isLogin && (
               <>
                 <label>Confirm Password</label>
-                <input type="password"  placeholder="Enter passsword"
-                value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-                {errors.confirmPassword && <p className={styles.errorMsg}>{errors.confirmPassword}</p>}
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  required
+                  placeholder="Confirm password"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                {errors.confirmPassword && (
+                  <p className="error">{errors.confirmPassword}</p>
+                )}
 
                 <label>Select Role</label>
-                <div className={styles.roleButtons}>
+                <div className="roleButtons">
                   {["waiter", "cashier", "admin"].map((r) => (
                     <button
                       key={r}
                       type="button"
-                      className={`${styles.roleBtn} ${role === r ? styles.active : ""}`}
+                      className={role === r ? "active" : ""}
                       onClick={() => setRole(r)}
                     >
                       {r}
                     </button>
                   ))}
                 </div>
-                {errors.role && <p className={styles.errorMsg}>{errors.role}</p>}
               </>
             )}
 
             {isLogin && (
-              <p className={styles.forgotPassword}>
+              <p className="forgotPassword">
                 <a href="/forgot-password">Forgot Password?</a>
               </p>
             )}
 
-            <button className={styles.authBtn}>{isLogin ? "Login" : "Sign Up"}</button>
+            <button className="authBtn">
+              {isLogin ? "Login" : "Sign Up"}
+            </button>
           </form>
 
-          <p className={styles.toggleText}>
+          <p className="signinText">
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <span
-              className={styles.toggleLink}
+              className="toggleLink"
               onClick={() => {
                 setIsLogin(!isLogin);
                 setErrors({});

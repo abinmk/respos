@@ -1,7 +1,4 @@
 const User = require("../models/User");
-
-
-
 exports.signup = async (req, res) => {
     const { name, email, mobile, password, role } = req.body;
   
@@ -30,4 +27,9 @@ exports.login = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Something went wrong", error: err.message });
   }
+  
 };
+
+
+
+// Define schema once (you can move this to a separate file and import it)

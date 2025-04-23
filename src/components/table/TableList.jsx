@@ -1,12 +1,12 @@
 import React from "react";
-import "./Menu.css";
+import "./TableList.css";
 
 const tables = Array.from({ length: 20 }, (_, i) => ({
   name: `Table ${i + 1}`,
   occupied: Math.random() < 0.5 // random occupied status for demo
 }));
 
-export default function Menu() {
+export default function TableList() {
   return (
     <div className="menu-container">
       <h2>Tables</h2>
