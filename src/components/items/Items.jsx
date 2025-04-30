@@ -1,63 +1,37 @@
 import React, { useState } from "react";
 import "./Items.css";
 import { toast } from "react-toastify";
+import { useTable } from "../../context/TableContext"; // adjust path if needed
 
 export default function Items() {
-  const [quantities, setQuantities] = useState({}); // { [item.id]: quantity }
+  const [quantities, setQuantities] = useState({});
+  const { selectedTable } = useTable();
 
   const items = [
-    {
-      id: 1,
-      name: "Chicken Biryani",
-      price: 150,
-      image: "https://source.unsplash.com/100x100/?biryani",
-    },
-    {
-      id: 2,
-      name: "Margherita Pizza",
-      price: 200,
-      image: "https://source.unsplash.com/100x100/?pizza",
-    },
-    {
-      id: 3,
-      name: "Veg Fried Rice",
-      price: 120,
-      image: "https://source.unsplash.com/100x100/?fried-rice",
-    },
-    {
-      id: 4,
-      name: "Paneer Butter Masala",
-      price: 180,
-      image: "https://source.unsplash.com/100x100/?paneer",
-    },
-    {
-      id: 5,
-      name: "Chicken 65",
-      price: 140,
-      image: "https://source.unsplash.com/100x100/?chicken",
-    },
-    {
-      id: 6,
-      name: "Masala Dosa",
-      price: 100,
-      image: "https://source.unsplash.com/100x100/?dosa",
-    },
+    { id: 1, name: "Chicken Biryani", price: 150, image: "https://source.unsplash.com/100x100/?biryani" },
+    { id: 2, name: "Margherita Pizza", price: 200, image: "https://source.unsplash.com/100x100/?pizza" },
+    { id: 3, name: "Veg Fried Rice", price: 120, image: "https://source.unsplash.com/100x100/?fried-rice" },
+    { id: 4, name: "Paneer Butter Masala", price: 180, image: "https://source.unsplash.com/100x100/?paneer" },
+    { id: 5, name: "Chicken 65", price: 140, image: "https://source.unsplash.com/100x100/?chicken" },
+    { id: 6, name: "Masala Dosa", price: 100, image: "https://source.unsplash.com/100x100/?dosa" },
   ];
 
   const addItem = async (item) => {
+    if (!selectedTable) return toast.warn("Please select a table first.");
+
     try {
       const res = await fetch("http://localhost:8080/api/additem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tableNum: 1,
+          tableNum: selectedTable.tableNumber,
           itemName: item.name,
           price: item.price,
         }),
       });
 
       if (res.ok) {
-        const result = await res.json(); // { count: number }
+        const result = await res.json();
         setQuantities((prev) => ({
           ...prev,
           [item.id]: result.item.quantity,
@@ -71,18 +45,20 @@ export default function Items() {
   };
 
   const removeItem = async (item) => {
+    if (!selectedTable) return toast.warn("Please select a table first.");
+
     try {
       const res = await fetch("http://localhost:8080/api/removeitem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tableNum: 1,
+          tableNum: selectedTable.tableNumber,
           itemName: item.name,
         }),
       });
 
       if (res.ok) {
-        const result = await res.json(); // { count: number }
+        const result = await res.json();
         setQuantities((prev) => ({
           ...prev,
           [item.id]: result.item.quantity,
@@ -98,6 +74,11 @@ export default function Items() {
   return (
     <div className="items-container">
       <h2 className="items-title">Menu Items</h2>
+      {selectedTable ? (
+        <h4>Selected Table: #{selectedTable.tableNumber}</h4>
+      ) : (
+        <h4 style={{ color: "gray" }}>No table selected</h4>
+      )}
       <div className="items-list">
         {items.map((item) => (
           <div className="item-card" key={item.id}>
@@ -116,6 +97,6 @@ export default function Items() {
           </div>
         ))}
       </div>
-    </div>
-  );
+    </div>
+  );
 }

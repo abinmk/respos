@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Order = require('../models/Order');
 
 // Define the schema
 const orderItemSchema = new mongoose.Schema({
@@ -73,4 +74,21 @@ exports.removeItem = async (req, res) => {
       res.status(500).json({ message: "Failed to remove item" });
     }
   };
+
+
+  exports.getTableDetails = async (req, res) => {
+    try {
+      const { tableNumber } = req.params;
+      const order = await Order.findOne({ tableNumber }); // Query your MongoDB collection
+      
+      if (!order) {
+        return res.status(404).json({ message: "Order not found for this table." });
+      }
+  
+      res.json(order); // Return the order data
+    } catch (err) {
+      res.status(500).json({ message: "Server error." });
+    }
+  };
+  
   
