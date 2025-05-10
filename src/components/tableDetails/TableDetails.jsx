@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./TableDetails.css";
 import { toast } from "react-toastify";
+import { loadRazorpayScript } from "./utils/razorpay"; // adjust the path as needed
 
 export default function TableDetails({ selectedTable }) {
   const [orderDetails, setOrderDetails] = useState(null);
@@ -40,29 +41,58 @@ export default function TableDetails({ selectedTable }) {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
-  const discount = 0; // Can add discount logic here if needed
+  const discount = 0;
   const tax = total * 0.05;
   const finalAmount = total - discount + tax;
 
+  // Handle Razorpay Checkout
+  const handleCheckout = async () => {
+    const res = await loadRazorpayScript();
+    if (!res) {
+      toast.error("Failed to load Razorpay SDK. Check internet connection.");
+      return;
+    }
+
+    const options = {
+      key: "rzp_test_x5Csa53ryAG0Gu", // replace with your test key
+      currency: "INR",
+      amount: finalAmount * 100, // amount in paisa
+      name: "POS Restaurant",
+      description: `Payment for Table ${selectedTable.tableNumber}`,
+      handler: function (response) {
+        toast.success("Payment successful!");
+        console.log("Razorpay Response:", response);
+        setOrderDetails({
+          items: [],
+        });
+      },
+      prefill: {
+        name: "Demo User",
+        email: "demo@example.com",
+        contact: "9000090000",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
   return (
     <div className="table-details">
-  <div className="table-header">
-  <div className="table-header-top">
-    <h2>Bill for Table : {selectedTable.tableNumber}</h2>
-    <span className="item-count">Total Items: {orderDetails.items.length}</span>
-  </div>
-
-  <div className="tableItem-row header">
-    <div>Item</div>
-    <div>Price</div>
-    <div>Qty</div>
-    <div>Total</div>
-  </div>
-</div>
+      <div className="table-header">
+        <div className="table-header-top">
+          <h2>Bill for Table : {selectedTable.tableNumber}</h2>
+          <span className="item-count">Total Items: {orderDetails.items.length}</span>
+        </div>
+        <div className="tableItem-row header">
+          <div>Item</div>
+          <div>Price</div>
+          <div>Qty</div>
+          <div>Total</div>
+        </div>
+      </div>
 
       <div className="tableItems-list">
-     
-
         {orderDetails.items.map((item) => (
           <div className="tableItem-row" key={item.id}>
             <div>{item.itemName}</div>
@@ -84,7 +114,9 @@ export default function TableDetails({ selectedTable }) {
         </div>
         <div className="summary-row total">
           <span>Final Amount</span>
-          <button className="checkout-btn">Checkout</button>
+          <button className="checkout-btn" onClick={handleCheckout}>
+            Checkout
+          </button>
           <span>₹{finalAmount.toFixed(2)}</span>
         </div>
       </div>
