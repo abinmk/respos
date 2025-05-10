@@ -9,6 +9,7 @@ const tables = Array.from({ length: 20 }, (_, i) => ({
 
 export default function TableList({setSelectedTable}) {
 
+
   const handleTableClick = (table) => {
     setSelectedTable({ tableNumber: table.id });
   };
@@ -20,14 +21,14 @@ export default function TableList({setSelectedTable}) {
         {tables.map((table) => (
           <div
             key={table.id}
-            className={`table-item ${table.occupied ? "occupied" : "free"}`}
+            className={`table-item ${table.length<=0 ? "free" : "occupied"}`}
             onClick={() => handleTableClick(table)}
           >
             <span className="table-name">{table.name}</span>
-            <span className={`status-dot ${table.occupied ? "dot-occupied" : "dot-free"}`}></span>
+            {/* <span className={`status-dot ${table.occupied ? "dot-occupied" : "dot-free"}`}></span>
             <span className="status-label">
               {table.occupied ? "Occupied" : "Free"}
-            </span>
+            </span> */}
           </div>
         ))}
       </div>
