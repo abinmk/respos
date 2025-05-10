@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Items.css";
 import { toast } from "react-toastify";
 
-export default function Items({ selectedTable }) {
+export default function Items({ selectedTable, setSelectedTable }) {
   const [quantities, setQuantities] = useState({});
 
   const items = [
@@ -15,34 +15,41 @@ export default function Items({ selectedTable }) {
   ];
 
   useEffect(() => {
+    // Set default table (if none selected)
+    if (!selectedTable) {
+      setSelectedTable({ tableNumber: 1 });
+    }
+
     const fetchTableDetails = async () => {
-      if (!selectedTable) return;
+      if (!selectedTable || !selectedTable.tableNumber) return;
 
       try {
         const res = await fetch(`http://localhost:8080/api/tabledetails/${selectedTable.tableNumber}`);
-        if (res.ok) {
-          const data = await res.json();
-          const updatedQuantities = {};
-          data.items.forEach(item => {
-            const matchedItem = items.find(i => i.name === item.itemName);
-            if (matchedItem) {
-              updatedQuantities[matchedItem.id] = item.quantity;
-            }
-          });
-          setQuantities(updatedQuantities);
-        } else {
+        if (!res.ok) {
           toast.error("Failed to fetch table details.");
+          return;
         }
+
+        const data = await res.json();
+        const updatedQuantities = {};
+
+        data.items.forEach((item) => {
+          const matched = items.find((i) => i.name === item.itemName);
+          if (matched) updatedQuantities[matched.id] = item.quantity;
+        });
+
+        setQuantities(updatedQuantities);
       } catch (err) {
         toast.error("Error fetching table details.");
       }
     };
 
     fetchTableDetails();
-  }, [selectedTable]);
+  }, [selectedTable, setSelectedTable]);
 
   const addItem = async (item) => {
-    if (!selectedTable) return toast.warn("Please select a table first.");
+    if (!selectedTable || !selectedTable.tableNumber)
+      return toast.warn("Please select a table first.");
 
     try {
       const res = await fetch("http://localhost:8080/api/additem", {
@@ -55,22 +62,22 @@ export default function Items({ selectedTable }) {
         }),
       });
 
-      if (res.ok) {
-        const result = await res.json();
-        setQuantities((prev) => ({
-          ...prev,
-          [item.id]: result.item.quantity,
-        }));
-      } else {
-        toast.error("Failed to add item.");
-      }
+      if (!res.ok) throw new Error("Add failed");
+
+      const result = await res.json();
+      setQuantities((prev) => ({
+        ...prev,
+        [item.id]: result.item.quantity,
+      }));
+      setSelectedTable({tableNumber:selectedTable.tableNumber});
     } catch (err) {
       toast.error("Server error. Try again later.");
     }
   };
 
   const removeItem = async (item) => {
-    if (!selectedTable) return toast.warn("Please select a table first.");
+    if (!selectedTable || !selectedTable.tableNumber)
+      return toast.warn("Please select a table first.");
 
     try {
       const res = await fetch("http://localhost:8080/api/removeitem", {
@@ -82,15 +89,13 @@ export default function Items({ selectedTable }) {
         }),
       });
 
-      if (res.ok) {
-        const result = await res.json();
-        setQuantities((prev) => ({
-          ...prev,
-          [item.id]: result.item.quantity,
-        }));
-      } else {
-        toast.error("Failed to remove item.");
-      }
+      if (!res.ok) throw new Error("Remove failed");
+
+      const result = await res.json();
+      setQuantities((prev) => ({
+        ...prev,
+        [item.id]: result.item?.quantity ?? 0,
+      }));
     } catch (err) {
       toast.error("Server error. Try again later.");
     }
@@ -99,11 +104,11 @@ export default function Items({ selectedTable }) {
   return (
     <div className="items-container">
       <h2 className="items-title">Menu Items</h2>
-      {selectedTable ? (
-        <h4>Selected Table: #{selectedTable.tableNumber}</h4>
-      ) : (
-        <h4 style={{ color: "gray" }}>No table selected</h4>
-      )}
+      <h4>
+        Selected Table:{" "}
+        {selectedTable?.tableNumber ? `#${selectedTable.tableNumber}` : "None"}
+      </h4>
+
       <div className="items-list">
         {items.map((item) => (
           <div className="item-card" key={item.id}>

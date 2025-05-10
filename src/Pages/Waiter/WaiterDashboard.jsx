@@ -15,7 +15,7 @@ export default function Waiter() {
           <TableList setSelectedTable={setSelectedTable} />
         </div>
         <div className="waiter-center">
-          <Items selectedTable={selectedTable} />
+          <Items selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
           <TableDetails selectedTable={selectedTable}  />
         </div>
       </div>
