@@ -53,6 +53,13 @@ export default function TableDetails({ selectedTable }) {
       return;
     }
 
+    if(finalAmount<10)
+    {
+      toast.error("No items to checkout");
+      alert("No items to checkout");
+      return;
+    }
+
     const options = {
       key: "rzp_test_x5Csa53ryAG0Gu", // replace with your test key
       currency: "INR",
@@ -69,7 +76,7 @@ export default function TableDetails({ selectedTable }) {
       prefill: {
         name: "Demo User",
         email: "demo@example.com",
-        contact: "9000090000",
+        contact: "9123491234",
       },
     };
 
