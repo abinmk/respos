@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import "./Items.css";
 import { toast } from "react-toastify";
-import { useTable } from "../../context/TableContext"; // adjust path if needed
 
-export default function Items() {
+export default function Items({selectedTable}) {
   const [quantities, setQuantities] = useState({});
-  const { selectedTable } = useTable();
 
   const items = [
     { id: 1, name: "Chicken Biryani", price: 150, image: "https://source.unsplash.com/100x100/?biryani" },

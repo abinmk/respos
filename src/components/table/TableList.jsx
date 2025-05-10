@@ -1,6 +1,5 @@
 import React from "react";
 import "./TableList.css";
-import { useTable } from "../../context/TableContext";
 
 const tables = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
@@ -8,8 +7,7 @@ const tables = Array.from({ length: 20 }, (_, i) => ({
   occupied: Math.random() < 0.5,
 }));
 
-export default function TableList() {
-  const { setSelectedTable } = useTable();
+export default function TableList({setSelectedTable}) {
 
   const handleTableClick = (table) => {
     setSelectedTable({ tableNumber: table.id });

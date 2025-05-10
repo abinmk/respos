@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./TableDetails.css";
-import { useTable } from "../../context/TableContext";
 import { toast } from "react-toastify";
 
-export default function TableDetails() {
-  const { selectedTable } = useTable();
+export default function TableDetails({selectedTable}) {
   const [orderDetails, setOrderDetails] = useState(null); // To hold fetched order details
   const [loading, setLoading] = useState(true);
 
