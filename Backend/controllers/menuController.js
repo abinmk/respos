@@ -99,3 +99,24 @@ exports.getTableDetails = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch table details" });
   }
 };
+
+// Clear Table
+exports.clearTable = async (req, res) => {
+  const { tableNumber } = req.params;
+
+  if (!tableNumber) {
+    return res.status(400).json({ message: "Table number is required" });
+  }
+
+  try {
+    const collectionName = `table_${tableNumber}`;
+    const TableOrder = mongoose.models[collectionName] || mongoose.model(collectionName, orderItemSchema, collectionName);
+
+    await TableOrder.deleteMany({}); // Clear all items
+
+    res.status(200).json({ message: `Table ${tableNumber} cleared successfully.` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to clear table" });
+  }
+};

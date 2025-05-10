@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./TableDetails.css";
 import { toast } from "react-toastify";
-import { loadRazorpayScript } from "./utils/razorpay"; // adjust the path as needed
+import { loadRazorpayScript } from "./utils/razorpay";
 
 export default function TableDetails({ selectedTable }) {
   const [orderDetails, setOrderDetails] = useState(null);
@@ -45,7 +45,6 @@ export default function TableDetails({ selectedTable }) {
   const tax = total * 0.05;
   const finalAmount = total - discount + tax;
 
-  // Handle Razorpay Checkout
   const handleCheckout = async () => {
     const res = await loadRazorpayScript();
     if (!res) {
@@ -53,25 +52,28 @@ export default function TableDetails({ selectedTable }) {
       return;
     }
 
-    if(finalAmount<10)
-    {
+    if (finalAmount < 10) {
       toast.error("No items to checkout");
       alert("No items to checkout");
       return;
     }
 
     const options = {
-      key: "rzp_test_x5Csa53ryAG0Gu", // replace with your test key
+      key: "rzp_test_x5Csa53ryAG0Gu",
       currency: "INR",
-      amount: finalAmount * 100, // amount in paisa
+      amount: finalAmount * 100,
       name: "POS Restaurant",
       description: `Payment for Table ${selectedTable.tableNumber}`,
       handler: function (response) {
         toast.success("Payment successful!");
         console.log("Razorpay Response:", response);
-        setOrderDetails({
-          items: [],
+        setOrderDetails({ items: [] });
+
+        fetch(`http://localhost:8080/api/clear/${selectedTable.tableNumber}`, {
+          method: "DELETE",
         });
+
+        window.location.reload(); // corrected from `window.reload()`
       },
       prefill: {
         name: "Demo User",
@@ -89,7 +91,9 @@ export default function TableDetails({ selectedTable }) {
       <div className="table-header">
         <div className="table-header-top">
           <h2>Bill for Table : {selectedTable.tableNumber}</h2>
-          <span className="item-count">Total Items: {orderDetails.items.length}</span>
+          <span className="item-count">
+            Total Items: {orderDetails.items.length}
+          </span>
         </div>
         <div className="tableItem-row header">
           <div>Item</div>
