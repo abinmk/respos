@@ -13,8 +13,12 @@
   justify-content: space-between;
 }
 
+.table-details>span{
+  font-size: 10px;
+}
+
 .table-header {
-  text-align: center;
+  text-align: start;
   margin-bottom: 20px;
 }
 
@@ -26,7 +30,6 @@
 .tableItems-list {
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
   max-height: 300px; /* Set height limit for scrolling */
   overflow-y: auto; /* Enables vertical scrolling */
   scrollbar-width: thin; /* For Firefox */
@@ -48,7 +51,7 @@
 .tableItem-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  padding: 8px 0;
+  padding: 5px 0;
   border-bottom: 1px solid #444;
   color: #fff;
 }
@@ -110,15 +113,17 @@
   font-weight: bold;
   font-size: 18px;
   border-top: 2px solid #ffa500;
-  margin-top: 10px;
-  padding-top: 12px;
+  margin-top: 2px;
+  /* padding-top: 12px; */
   color: #fff;
 }
 
 .checkout-btn {
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
+  /* margin-top: 10px; */
+  width: 20%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px;
   background-color: #ffa500;
   color: #1e1e1e;
   font-size: 16px;

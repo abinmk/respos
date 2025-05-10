@@ -46,17 +46,22 @@ export default function TableDetails({ selectedTable }) {
 
   return (
     <div className="table-details">
-      <div className="table-header">
-        <h2>Bill for Table #{selectedTable.tableNumber}</h2>
-      </div>
+  <div className="table-header">
+  <div className="table-header-top">
+    <h2>Bill for Table : {selectedTable.tableNumber}</h2>
+    <span className="item-count">Total Items: {orderDetails.items.length}</span>
+  </div>
+
+  <div className="tableItem-row header">
+    <div>Item</div>
+    <div>Price</div>
+    <div>Qty</div>
+    <div>Total</div>
+  </div>
+</div>
 
       <div className="tableItems-list">
-        <div className="tableItem-row header">
-          <div>Item</div>
-          <div>Price</div>
-          <div>Qty</div>
-          <div>Total</div>
-        </div>
+     
 
         {orderDetails.items.map((item) => (
           <div className="tableItem-row" key={item.id}>
@@ -79,9 +84,9 @@ export default function TableDetails({ selectedTable }) {
         </div>
         <div className="summary-row total">
           <span>Final Amount</span>
+          <button className="checkout-btn">Checkout</button>
           <span>₹{finalAmount.toFixed(2)}</span>
         </div>
-        <button className="checkout-btn">Checkout</button>
       </div>
     </div>
   );
