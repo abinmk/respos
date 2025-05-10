@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Items.css";
 import { toast } from "react-toastify";
 
-export default function Items({selectedTable}) {
+export default function Items({ selectedTable }) {
   const [quantities, setQuantities] = useState({});
 
   const items = [
@@ -13,6 +13,33 @@ export default function Items({selectedTable}) {
     { id: 5, name: "Chicken 65", price: 140, image: "https://source.unsplash.com/100x100/?chicken" },
     { id: 6, name: "Masala Dosa", price: 100, image: "https://source.unsplash.com/100x100/?dosa" },
   ];
+
+  useEffect(() => {
+    const fetchTableDetails = async () => {
+      if (!selectedTable) return;
+
+      try {
+        const res = await fetch(`http://localhost:8080/api/tabledetails/${selectedTable.tableNumber}`);
+        if (res.ok) {
+          const data = await res.json();
+          const updatedQuantities = {};
+          data.items.forEach(item => {
+            const matchedItem = items.find(i => i.name === item.itemName);
+            if (matchedItem) {
+              updatedQuantities[matchedItem.id] = item.quantity;
+            }
+          });
+          setQuantities(updatedQuantities);
+        } else {
+          toast.error("Failed to fetch table details.");
+        }
+      } catch (err) {
+        toast.error("Error fetching table details.");
+      }
+    };
+
+    fetchTableDetails();
+  }, [selectedTable]);
 
   const addItem = async (item) => {
     if (!selectedTable) return toast.warn("Please select a table first.");

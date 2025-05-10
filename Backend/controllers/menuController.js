@@ -79,14 +79,17 @@ exports.removeItem = async (req, res) => {
   exports.getTableDetails = async (req, res) => {
     try {
       const { tableNumber } = req.params;
-      const order = await Order.findOne({ tableNumber }); // Query your MongoDB collection
-      
-      if (!order) {
-        return res.status(404).json({ message: "Order not found for this table." });
-      }
+      const collectionName = `table_${tableNumber}`;
   
-      res.json(order); // Return the order data
+      const TableOrder =
+        mongoose.models[collectionName] ||
+        mongoose.model(collectionName, orderItemSchema, collectionName);
+  
+      const items = await TableOrder.find(); // Get all items for this table
+  
+      res.json({ items }); // Return items array
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: "Server error." });
     }
   };
