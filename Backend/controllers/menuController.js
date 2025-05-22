@@ -1,5 +1,7 @@
-const mongoose = require("mongoose");
-const Order = require('../models/Order');
+
+import mongoose from 'mongoose';
+import Menu from '../models/Menu.js';
+import Order from '../models/Order.js';
 
 // Define the schema
 const orderItemSchema = new mongoose.Schema({
@@ -16,7 +18,7 @@ const orderItemSchema = new mongoose.Schema({
 });
 
 // Add Item
-exports.addItem = async (req, res) => {
+export const addItem = async (req, res) => {
   const { tableNum, itemName, price } = req.body;
 
   if (!itemName || !price || !tableNum) {
@@ -48,7 +50,7 @@ exports.addItem = async (req, res) => {
 };
 
 // Remove Item
-exports.removeItem = async (req, res) => {
+export const removeItem = async (req, res) => {
   const { tableNum, itemName } = req.body;
 
   if (!itemName || !tableNum) {
@@ -80,7 +82,7 @@ exports.removeItem = async (req, res) => {
 };
 
 // Get Table Details
-exports.getTableDetails = async (req, res) => {
+export const getTableDetails = async (req, res) => {
   const { tableNumber } = req.params;
 
   if (!tableNumber) {
@@ -101,7 +103,7 @@ exports.getTableDetails = async (req, res) => {
 };
 
 // Clear Table
-exports.clearTable = async (req, res) => {
+export const clearTable = async (req, res) => {
   const { tableNumber } = req.params;
 
   if (!tableNumber) {
@@ -118,5 +120,89 @@ exports.clearTable = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to clear table" });
+  }
+};
+
+
+export const addMenuItem = async (req, res) => {
+  const { name, image, price } = req.body;
+
+  if (!name || !image || !price) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    const newItem = new Menu({ name, image, price });
+    await newItem.save();
+    res.status(201).json({ message: 'Menu item added', item: newItem });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+export const getMenuItems = async (req, res) => {
+  try {
+    const items = await Menu.find();
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+// POST /api/orders
+
+export const checkoutOrder = async (req, res) => {
+  const { tableNumber, items, totalAmount, paymentId, paymentSignature, paymentOrderId, timestamp } = req.body;
+
+  try {
+    const newOrder = new Order({
+      tableNumber,
+      items,
+      totalAmount,
+      paymentId,
+      paymentSignature,
+      paymentOrderId,
+      timestamp,
+    });
+
+    await newOrder.save();
+
+    res.status(201).json({ message: "Order saved successfully" });
+  } catch (error) {
+    console.error("Order Save Error:", error);
+    res.status(500).json({ error: "Failed to save order" });
+  }
+};
+
+// GET /api/orders
+export const getOrders = async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ timestamp: -1 }); // Optional: sorted by newest first
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Get Orders Error:", error);
+    res.status(500).json({ message: "Failed to fetch orders", error });
+  }
+};
+
+// DELETE /api/menu/:id
+export const deleteMenuItem = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ message: 'Menu item ID is required' });
+  }
+
+  try {
+    const deletedItem = await Menu.findByIdAndDelete(id);
+
+    if (!deletedItem) {
+      return res.status(404).json({ message: 'Menu item not found' });
+    }
+
+    res.status(200).json({ message: 'Menu item deleted successfully', item: deletedItem });
+  } catch (error) {
+    console.error('Delete Menu Item Error:', error);
+    res.status(500).json({ message: 'Failed to delete menu item', error });
   }
 };

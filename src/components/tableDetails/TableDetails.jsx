@@ -51,29 +51,60 @@ export default function TableDetails({ selectedTable }) {
       toast.error("Failed to load Razorpay SDK. Check internet connection.");
       return;
     }
-
+  
     if (finalAmount < 10) {
       toast.error("No items to checkout");
       alert("No items to checkout");
       return;
     }
-
+  
     const options = {
       key: "rzp_test_x5Csa53ryAG0Gu",
       currency: "INR",
       amount: finalAmount * 100,
       name: "POS Restaurant",
       description: `Payment for Table ${selectedTable.tableNumber}`,
-      handler: function (response) {
+      handler: async function (response) {
         toast.success("Payment successful!");
         console.log("Razorpay Response:", response);
-        setOrderDetails({ items: [] });
-
-        fetch(`http://localhost:8080/api/clear/${selectedTable.tableNumber}`, {
-          method: "DELETE",
-        });
-
-        window.location.reload(); // corrected from `window.reload()`
+  
+        // Prepare order data to send to backend
+        const orderData = {
+          tableNumber: selectedTable.tableNumber,
+          items: orderDetails.items,
+          totalAmount: finalAmount,
+          paymentId: response.razorpay_payment_id,
+          paymentSignature: response.razorpay_signature,
+          paymentOrderId: response.razorpay_order_id,
+          timestamp: new Date().toISOString(),
+        };
+  
+        try {
+          // Send order details to backend order table
+          const orderRes = await fetch("http://localhost:8080/api/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderData),
+          });
+  
+          if (!orderRes.ok) {
+            throw new Error("Failed to save order");
+          }
+  
+          // Clear the current table order
+          await fetch(`http://localhost:8080/api/clear/${selectedTable.tableNumber}`, {
+            method: "DELETE",
+          });
+  
+          setOrderDetails({ items: [] });
+  
+          // Refresh UI or selected table to reload data
+          window.location.reload();
+  
+        } catch (err) {
+          toast.error("Failed to save order. Please contact admin.");
+          console.error(err);
+        }
       },
       prefill: {
         name: "Demo User",
@@ -81,7 +112,7 @@ export default function TableDetails({ selectedTable }) {
         contact: "9123491234",
       },
     };
-
+  
     const rzp = new window.Razorpay(options);
     rzp.open();
   };

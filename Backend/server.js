@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 app.use("/api", authRoutes);
 app.use("/api", menuRoutes);
 
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

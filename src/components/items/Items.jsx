@@ -4,15 +4,26 @@ import { toast } from "react-toastify";
 
 export default function Items({ selectedTable, setSelectedTable }) {
   const [quantities, setQuantities] = useState({});
+  const [items, setItems] = useState([]);  // <-- dynamic items state
 
-  const items = [
-    { id: 1, name: "Chicken Biryani", price: 150, image: "https://media.istockphoto.com/id/2077426665/photo/selective-focus-of-one-of-the-most-popular-food-in-india-biryani.jpg?s=1024x1024&w=is&k=20&c=TrplV8CyNlyWQf0TU9yYqavs81Oq3GkCmuiVGVbgDGY=" },
-    { id: 2, name: "Margherita Pizza", price: 200, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=2881&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
-    { id: 3, name: "Veg Fried Rice", price: 120, image: "https://media.istockphoto.com/id/2180205841/photo/stir-fried-rice-with-mushroom-and-tofu-directly-above-photo.jpg?s=1024x1024&w=is&k=20&c=MP_zUAtEZ8WvoWIhKVlq9MndiV2eaNSfPErROQeHeCI=" },
-    { id: 4, name: "Paneer Butter Masala", price: 180, image: "https://media.istockphoto.com/id/1085159910/photo/malai-or-achari-paneer-in-a-gravy-made-using-red-gravy-and-green-capsicum-served-in-a-bowl.jpg?s=1024x1024&w=is&k=20&c=x-AgV0vfukGAAXVdbKVYwiI5b3a212D66gLSMk9g_cw=" },
-    { id: 5, name: "Chicken 65", price: 140, image: "https://media.istockphoto.com/id/1322439549/photo/indian-chicken-fry.jpg?s=1024x1024&w=is&k=20&c=kLLH1jaWiXDYeimYL4MAMpV3GLDLNI9GF4qoQ3ogPo4=" },
-    { id: 6, name: "Masala Dosa", price: 100, image: "https://images.unsplash.com/photo-1743517894265-c86ab035adef?q=80&w=2882&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
-  ];
+  useEffect(() => {
+    // Fetch menu items from backend on component mount
+    const fetchMenuItems = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/menuitems");
+        if (!res.ok) {
+          toast.error("Failed to fetch menu items.");
+          return;
+        }
+        const data = await res.json();
+        setItems(data);
+      } catch (err) {
+        toast.error("Error fetching menu items.");
+      }
+    };
+
+    fetchMenuItems();
+  }, []);
 
   useEffect(() => {
     // Set default table (if none selected)
@@ -35,7 +46,7 @@ export default function Items({ selectedTable, setSelectedTable }) {
 
         data.items.forEach((item) => {
           const matched = items.find((i) => i.name === item.itemName);
-          if (matched) updatedQuantities[matched.id] = item.quantity;
+          if (matched) updatedQuantities[matched._id ] = item.quantity;
         });
 
         setQuantities(updatedQuantities);
@@ -45,7 +56,7 @@ export default function Items({ selectedTable, setSelectedTable }) {
     };
 
     fetchTableDetails();
-  }, [selectedTable, setSelectedTable]);
+  }, [selectedTable, setSelectedTable, items]); // <-- include items so quantities update after items load
 
   const addItem = async (item) => {
     if (!selectedTable || !selectedTable.tableNumber)
@@ -67,9 +78,9 @@ export default function Items({ selectedTable, setSelectedTable }) {
       const result = await res.json();
       setQuantities((prev) => ({
         ...prev,
-        [item.id]: result.item.quantity,
+        [item.id ]: result.item.quantity,
       }));
-      setSelectedTable({tableNumber:selectedTable.tableNumber});
+      setSelectedTable({ tableNumber: selectedTable.tableNumber });
     } catch (err) {
       toast.error("Server error. Try again later.");
     }
@@ -97,7 +108,7 @@ export default function Items({ selectedTable, setSelectedTable }) {
         [item.id]: result.item?.quantity ?? 0,
       }));
 
-      setSelectedTable({tableNumber:selectedTable.tableNumber});
+      setSelectedTable({ tableNumber: selectedTable.tableNumber });
     } catch (err) {
       toast.error("Server error. Try again later.");
     }
@@ -105,29 +116,36 @@ export default function Items({ selectedTable, setSelectedTable }) {
 
   return (
     <div className="items-container">
-      <h2 className="items-title">Menu Items</h2>
-      <h4>
-        Selected Table:{" "}
-        {selectedTable?.tableNumber ? `#${selectedTable.tableNumber}` : "None"}
-      </h4>
+     <h2 className="items-title">
+     Menu Items
+         <span className="selected-table">
+        Table: <strong>{selectedTable?.tableNumber || "None"}</strong>
+      </span>
+    </h2>
+    <hr />
+     
 
       <div className="items-list">
-        {items.map((item) => (
-          <div className="item-card" key={item.id}>
-            <img src={item.image} alt={item.name} className="item-image" />
-            <div className="item-info">
-              <h4>{item.name}</h4>
-              <p>₹{item.price}</p>
-              <p>Quantity: {quantities[item.id] || 0}</p>
+        {items.length === 0 ? (
+          <p>Loading menu items...</p>
+        ) : (
+          items.map((item) => (
+            <div className="item-card" key={item._id }>
+              <img src={item.image} alt={item.name} className="item-image" />
+              <div className="item-info">
+                <h4>{item.name}</h4>
+                <p>₹{item.price}</p>
+                <p>Quantity: {quantities[item._id] || 0}</p>
+              </div>
+              <button className="add-btn" onClick={() => addItem(item)}>
+                + Add
+              </button>
+              <button className="remove-btn" onClick={() => removeItem(item)}>
+                Remove
+              </button>
             </div>
-            <button className="add-btn" onClick={() => addItem(item)}>
-              + Add
-            </button>
-            <button className="remove-btn" onClick={() => removeItem(item)}>
-              Remove
-            </button>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

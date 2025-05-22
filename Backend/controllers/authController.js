@@ -1,20 +1,21 @@
 const User = require("../models/User");
+
 exports.signup = async (req, res) => {
-    const { name, email, mobile, password, role } = req.body;
-  
-    try {
-      const existingUser = await User.findOne({ email });
-      if (existingUser) return res.status(409).json({ message: "User already exists" });
-  
-      const user = new User({ name, email, mobile, password, role });
-      await user.save();
-  
-      res.status(201).json({ message: "Signup successful" });
-    } catch (err) {
-      console.error("❌ Signup error:", err);
-      res.status(500).json({ message: "Something went wrong", error: err.message });
-    }
-  };
+  const { name, email, mobile, password, role } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(409).json({ message: "User already exists" });
+
+    const user = new User({ name, email, mobile, password, role });
+    await user.save();
+
+    res.status(201).json({ message: "Signup successful" });
+  } catch (err) {
+    console.error("❌ Signup error:", err);
+    res.status(500).json({ message: "Something went wrong", error: err.message });
+  }
+};
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -27,9 +28,14 @@ exports.login = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Something went wrong", error: err.message });
   }
-  
 };
 
-
-
-// Define schema once (you can move this to a separate file and import it)
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, '-password'); // Exclude password field
+    res.status(200).json(users);
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ message: 'Failed to fetch users' });
+  }
+};

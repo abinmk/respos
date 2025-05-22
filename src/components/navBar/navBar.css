@@ -1,0 +1,50 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    color: white;
+  }
+  
+  .navbar-brand h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  .navbar-links {
+    display: flex;
+  }
+  
+  .navbar-item {
+    margin-right: 20px;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .navbar-item:hover {
+    text-decoration: underline;
+  }
+  
+  .navbar-user {
+    display: flex;
+    align-items: center;
+  }
+  
+  .username {
+    margin-right: 10px;
+  }
+  
+  .login-btn,
+  .logout-btn {
+    padding: 5px 10px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .login-btn:hover,
+  .logout-btn:hover {
+    background-color: #45a049;
+  }

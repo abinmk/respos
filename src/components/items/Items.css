@@ -9,6 +9,24 @@
   flex-direction: column;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
+.items-title {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.selected-table {
+  font-size: 16px;
+  color: #fff; 
+  background-color: #ea2020;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 500;
+  display: inline-block;
+}
 
 .items-title {
   margin-bottom: 4px;
