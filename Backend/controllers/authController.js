@@ -1,6 +1,6 @@
-const User = require("../models/User");
+import User from "../models/User.js";
 
-exports.signup = async (req, res) => {
+export const signup = async (req, res) => {
   const { name, email, mobile, password, role } = req.body;
 
   try {
@@ -17,7 +17,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+export const  login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.getUsers = async (req, res) => {
+export const  getUsers = async (req, res) => {
   try {
     const users = await User.find({}, '-password'); // Exclude password field
     res.status(200).json(users);
